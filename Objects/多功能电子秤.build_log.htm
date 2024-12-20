@@ -1,0 +1,45 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: μVision V5.25.3.0
+Copyright (C) 2018 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Lin ZhiKai, LinZhiKai, LIC=47QMA-1AM1I-830MD-8B66T-E1BV6-88PQG
+ 
+Tool Versions:
+Toolchain:       PK51 Prof. Developers Kit  Version: 9.59.0.0
+Toolchain Path:  C:\Keil_v5\C51\BIN
+C Compiler:      C51.exe V9.59.0.0
+Assembler:       A51.exe V8.2.7.0
+Linker/Locator:  LX51.exe V4.66.93.0
+Library Manager: LIBX51.exe V4.30.1.0
+Hex Converter:   OHX51.exe V1.47.0.0
+CPU DLL:         S8051.DLL V3.122.0.0
+Dialog DLL:      DP51.DLL V2.66.0.0 
+<h2>Project:</h2>
+c:\Users\kaika\Desktop\多功能电子秤\多功能电子秤.uvproj
+Project File Date:  12/20/2024
+
+<h2>Output:</h2>
+Rebuild target 'Target 1'
+assembling STARTUP.A51...
+compiling main.c...
+compiling app_main.c...
+compiling 1602LCD.c...
+compiling HX711.c...
+compiling systick.c...
+linking...
+*** ERROR L127: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  usb_OUT_callback
+    MODULE:  .\divers\stc_usb_cdc_8h_xdata_interrupt.LIB (USB)
+*** ERROR L128: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  usb_OUT_callback
+    MODULE:  .\divers\stc_usb_cdc_8h_xdata_interrupt.LIB (USB)
+    ADDRESS: 1000E97H
+Program Size: data=15.4 xdata=344 const=151 code=6582
+Target not created.
+Build Time Elapsed:  00:00:00
+</pre>
+</body>
+</html>

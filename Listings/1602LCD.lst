@@ -1,0 +1,97 @@
+C51 COMPILER V9.59.0.0   1602LCD                                                           12/20/2024 20:21:07 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE 1602LCD
+OBJECT MODULE PLACED IN .\Objects\1602LCD.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE divers\1602LCD.c LARGE OMF2 OPTIMIZE(8,SPEED) BROWSE INCDIR(.\App;.\dive
+                    -rs;.\main) DEBUG PRINT(.\Listings\1602LCD.lst) TABS(2) OBJECT(.\Objects\1602LCD.obj)
+
+line level    source
+
+   1          #include "1602LCD.h"
+   2          
+   3          void LCD1602_RDbf(void) // 读忙状态
+   4          {
+   5   1          uchar sta;
+   6   1          LCD_1602_Data = 0xFF;
+   7   1          LCD_1602_RS = 0;
+   8   1          LCD_1602_RW = 1;
+   9   1          while (1)
+  10   1          {
+  11   2              LCD_1602_E = 1;
+  12   2              DelayTick(1);
+  13   2              sta = LCD_1602_Data;
+  14   2              DelayTick(1);
+  15   2              LCD_1602_E = 0;
+  16   2              DelayTick(1);
+  17   2              if ((sta & 0x80) == 0)
+  18   2              {
+  19   3                  break;
+  20   3              }
+  21   2          }
+  22   1      }
+  23          
+  24          void LCD1602_Wr_Data(uchar wrdata) // 写数据
+  25          {
+  26   1          LCD1602_RDbf();
+  27   1          LCD_1602_RS = 1;
+  28   1          LCD_1602_RW = 1;
+  29   1          DelayTick(1);
+  30   1          LCD_1602_Data = wrdata;
+  31   1          DelayTick(1);
+  32   1          LCD_1602_E = 1;
+  33   1          DelayTick(1);
+  34   1          LCD_1602_E = 0;
+  35   1      }
+  36          
+  37          void LCD1602_Wr_Command(uchar wrcommand) // 写指令
+  38          {
+  39   1          LCD1602_RDbf();
+  40   1          LCD_1602_RS = 0;
+  41   1          LCD_1602_RW = 0;
+  42   1          DelayTick(1);
+  43   1          LCD_1602_Data = wrcommand;
+  44   1          DelayTick(1);
+  45   1          LCD_1602_E = 1;
+  46   1          DelayTick(1);
+  47   1          LCD_1602_E = 0;
+  48   1      }
+  49          
+  50          void LCD1602_Display_String(char *str) // 显示字符
+  51          {
+  52   1          LCD1602_RDbf();
+  53   1          while (*str)
+  54   1          {
+C51 COMPILER V9.59.0.0   1602LCD                                                           12/20/2024 20:21:07 PAGE 2   
+
+  55   2              LCD1602_Wr_Data(*str++);
+  56   2          }
+  57   1      }
+  58          
+  59          void LCD1602_Init(void) // 初始化
+  60          {
+  61   1          LCD1602_Wr_Command(0x38);
+  62   1          LCD1602_Wr_Command(0x38);
+  63   1          LCD1602_Wr_Command(0x0c);
+  64   1          LCD1602_Wr_Command(0x01);
+  65   1          DelayTick(2);
+  66   1          LCD1602_Wr_Command(0x04);
+  67   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    226    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----       6
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

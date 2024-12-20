@@ -1,0 +1,62 @@
+C51 COMPILER V9.59.0.0   APP_MAIN                                                          12/20/2024 20:21:07 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE APP_MAIN
+OBJECT MODULE PLACED IN .\Objects\app_main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE App\app_main.c LARGE OMF2 OPTIMIZE(8,SPEED) BROWSE INCDIR(.\App;.\divers
+                    -;.\main) DEBUG PRINT(.\Listings\app_main.lst) TABS(2) OBJECT(.\Objects\app_main.obj)
+
+line level    source
+
+   1          #include "app_main.h"
+   2          
+   3          char *USER_DEVICEDESC = NULL;
+   4          char *USER_PRODUCTDESC = NULL;
+   5          char *USER_STCISPCMD = "@STCISP#"; // 可以自定义
+   6          
+   7          void app_main()
+   8          {
+   9   1      
+  10   1          // 扩展寄存器(XFR)访问使能
+  11   1          P_SW2 |= 0x80;
+  12   1          usb_init();
+  13   1          Timer0_Init();
+  14   1          EA = 1;
+  15   1          P2M0 = 0x00;
+  16   1          P2M1 = 0x00;
+  17   1          while (DeviceState != DEVSTATE_CONFIGURED)
+  18   1          {
+  19   2          }
+  20   1      
+  21   1          while (1)
+  22   1          {
+  23   2      
+  24   2              P20 = ~P20;
+  25   2              printf("HX711 = %d", 23u);
+  26   2              DelayTick(1000);
+  27   2          }
+  28   1      }
+  29          
+  30          // BOOL usb_OUT_callback()
+  31          // {
+  32          //     USB_SendData("ok", 2);
+  33          //     return 1;
+  34          // }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     53    ----
+   CONSTANT SIZE    =     20    ----
+   XDATA SIZE       =      9    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
