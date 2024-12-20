@@ -30,16 +30,14 @@ compiling 1602LCD.c...
 compiling HX711.c...
 compiling systick.c...
 linking...
-*** ERROR L127: UNRESOLVED EXTERNAL SYMBOL
-    SYMBOL:  usb_OUT_callback
-    MODULE:  .\divers\stc_usb_cdc_8h_xdata_interrupt.LIB (USB)
-*** ERROR L128: REFERENCE MADE TO UNRESOLVED EXTERNAL
-    SYMBOL:  usb_OUT_callback
-    MODULE:  .\divers\stc_usb_cdc_8h_xdata_interrupt.LIB (USB)
-    ADDRESS: 1000E97H
-Program Size: data=15.4 xdata=344 const=151 code=6582
-Target not created.
-Build Time Elapsed:  00:00:00
+*** WARNING L15: MULTIPLE CALL TO FUNCTION
+    NAME:    _USB_BULK_INTR_IN/USB
+    CALLER1: ?C_C51STARTUP
+    CALLER2: USB_ISR/USB
+Program Size: data=15.4 xdata=353 const=155 code=6755
+creating hex file from ".\Objects\多功能电子秤"...
+".\Objects\多功能电子秤" - 0 Error(s), 1 Warning(s).
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

@@ -7,7 +7,8 @@
                 "c:\\Users\\kaika\\Desktop\\多功能电子秤\\divers",
                 "c:\\Users\\kaika\\Desktop\\多功能电子秤\\main",
                 "C:\\Keil_v5\\C51\\INC",
-                "c:\\Users\\kaika\\Desktop\\多功能电子秤"
+                "c:\\Users\\kaika\\Desktop\\多功能电子秤",
+                "C:/Keil_v5/C51/INC/STC"
             ],
             "defines": [
                 "__C51__",

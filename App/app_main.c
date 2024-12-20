@@ -22,7 +22,7 @@ void app_main()
     {
 
         P20 = ~P20;
-        printf("HX711 = %d", 23u);
+        printf("HX711 = %d\n", 23u);
         DelayTick(1000);
     }
 }

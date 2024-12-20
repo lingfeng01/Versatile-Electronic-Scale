@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   1602LCD                                                           12/20/2024 20:21:07 PAGE 1   
+C51 COMPILER V9.59.0.0   1602LCD                                                           12/20/2024 20:38:19 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE 1602LCD
@@ -62,7 +62,7 @@ line level    source
   52   1          LCD1602_RDbf();
   53   1          while (*str)
   54   1          {
-C51 COMPILER V9.59.0.0   1602LCD                                                           12/20/2024 20:21:07 PAGE 2   
+C51 COMPILER V9.59.0.0   1602LCD                                                           12/20/2024 20:38:19 PAGE 2   
 
   55   2              LCD1602_Wr_Data(*str++);
   56   2          }
