@@ -11,7 +11,7 @@ linking...
     CALLER1: ?C_C51STARTUP
     CALLER2: USB_ISR/USB
 
-Program Size: data=15.4 xdata=353 const=155 code=6755
+Program Size: data=15.4 xdata=357 const=169 code=7082
 creating hex file from ".\Objects\多功能电子秤"...
 ".\Objects\多功能电子秤" - 0 Error(s), 1 Warning(s).
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:00

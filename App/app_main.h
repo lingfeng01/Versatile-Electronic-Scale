@@ -5,6 +5,7 @@
 #include <stc8h.h>
 #include "./divers/command.h"
 #include "systick.h"
+#include "1602LCD.h"
 
 void app_main();
 
