@@ -25,7 +25,7 @@ void LCD1602_Wr_Data(uchar wrdata) // 写数据
 {
     LCD1602_RDbf();
     LCD_1602_RS = 1;
-    LCD_1602_RW = 1;
+    LCD_1602_RW = 0;
     DelayTick(1);
     LCD_1602_Data = wrdata;
     DelayTick(1);
@@ -90,8 +90,7 @@ void LCD1602_Display_String(uint Line, uint Column, char *String) // 指定位�
 void LCD1602_Init(void) // 初始化
 {
     LCD1602_Wr_Command(0x38);
-    LCD1602_Wr_Command(0x38);
     LCD1602_Wr_Command(0x0c);
+    LCD1602_Wr_Command(0x06);
     LCD1602_Wr_Command(0x01);
-    LCD1602_Wr_Command(0x04);
 }

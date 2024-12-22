@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   1602LCD                                                           12/20/2024 23:25:42 PAGE 1   
+C51 COMPILER V9.59.0.0   1602LCD                                                           12/22/2024 19:51:54 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE 1602LCD
@@ -35,7 +35,7 @@ line level    source
   25          {
   26   1          LCD1602_RDbf();
   27   1          LCD_1602_RS = 1;
-  28   1          LCD_1602_RW = 1;
+  28   1          LCD_1602_RW = 0;
   29   1          DelayTick(1);
   30   1          LCD_1602_Data = wrdata;
   31   1          DelayTick(1);
@@ -62,7 +62,7 @@ line level    source
   52           * @param  Column 列位置，范围：1~16
   53           * @retval 无
   54           */
-C51 COMPILER V9.59.0.0   1602LCD                                                           12/20/2024 23:25:42 PAGE 2   
+C51 COMPILER V9.59.0.0   1602LCD                                                           12/22/2024 19:51:54 PAGE 2   
 
   55          void LCD_SetCursor(uint Line, uint Column)
   56          {
@@ -102,15 +102,14 @@ line level    source
   90          void LCD1602_Init(void) // 初始化
   91          {
   92   1          LCD1602_Wr_Command(0x38);
-  93   1          LCD1602_Wr_Command(0x38);
-  94   1          LCD1602_Wr_Command(0x0c);
+  93   1          LCD1602_Wr_Command(0x0c);
+  94   1          LCD1602_Wr_Command(0x06);
   95   1          LCD1602_Wr_Command(0x01);
-  96   1          LCD1602_Wr_Command(0x04);
-  97   1      }
+  96   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    289    ----
+   CODE SIZE        =    279    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----      12
    PDATA SIZE       =   ----    ----

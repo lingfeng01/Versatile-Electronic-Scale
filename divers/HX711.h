@@ -11,4 +11,7 @@ sbit ADDO = P1 ^ 1;
 sbit ADSK = P4 ^ 7;
 
 ulong ReadCount(void);
+uint16_t read_weight(uint16_t k, uint32_t b);
+ulong read_weight_base();
+
 #endif

@@ -8,7 +8,7 @@
 sbit LCD_1602_RS = P2 ^ 5;
 sbit LCD_1602_RW = P2 ^ 6;
 sbit LCD_1602_E = P2 ^ 7;
-sbit LCD_1602_Data = P0;
+#define LCD_1602_Data P0
 
 void LCD1602_RDbf(void);                                           // 读忙状态
 void LCD1602_Wr_Data(uchar wrdata);                                // 写数据

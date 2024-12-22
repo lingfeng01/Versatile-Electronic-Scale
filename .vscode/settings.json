@@ -1,6 +1,11 @@
 {
     "files.associations": {
         "app_main.h": "c",
-        "command.h": "c"
-    }
+        "command.h": "c",
+        "systick.h": "c",
+        "lcd1602.h": "c",
+        "hx711.h": "c",
+        "stc32_stc8_usb.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }

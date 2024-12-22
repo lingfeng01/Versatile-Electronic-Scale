@@ -426,6 +426,11 @@
               <FileType>4</FileType>
               <FilePath>.\divers\stc_usb_cdc_8h_xdata_interrupt.LIB</FilePath>
             </File>
+            <File>
+              <FileName>I2C.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\divers\I2C.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

@@ -6,11 +6,5 @@
 #include "./divers/command.h"
 #include <stdio.h>
 #include "systick.h"
-#include "HX711.h"
-#include "1602LCD.h"
-
-sbit BEEP = P2 ^ 4;
-void IO_Init();
-void app_main();
 
 #endif
