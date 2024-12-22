@@ -5,7 +5,11 @@
         "systick.h": "c",
         "lcd1602.h": "c",
         "hx711.h": "c",
-        "stc32_stc8_usb.h": "c"
+        "stc32_stc8_usb.h": "c",
+        "STC32_STC8_USB.H": "cpp",
+        "keyscan.h": "c",
+        "main.h": "c",
+        "key_detect.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

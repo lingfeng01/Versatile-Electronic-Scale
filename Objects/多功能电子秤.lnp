@@ -5,7 +5,8 @@
 ".\Objects\HX711.obj",
 ".\Objects\systick.obj",
 ".\divers\stc_usb_cdc_8h_xdata_interrupt.LIB",
-".\Objects\I2C.obj" 
+".\Objects\I2C.obj",
+".\Objects\key_detect.obj" 
 TO ".\Objects\多功能电子秤" 
 
 PRINT(".\Listings\多功能电子秤.map") REMOVEUNUSED 

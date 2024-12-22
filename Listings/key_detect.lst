@@ -1,0 +1,60 @@
+C51 COMPILER V9.59.0.0   KEY_DETECT                                                        12/23/2024 00:05:49 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE KEY_DETECT
+OBJECT MODULE PLACED IN .\Objects\key_detect.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE divers\key_detect.c LARGE OMF2 OPTIMIZE(8,SPEED) BROWSE INCDIR(.\App;.\d
+                    -ivers;.\main) DEBUG PRINT(.\Listings\key_detect.lst) TABS(2) OBJECT(.\Objects\key_detect.obj)
+
+line level    source
+
+   1          #include "key_detect.h"
+   2          
+   3          /**
+   4           * @brief 按键消抖取边缘函数，该函数需要循环调用
+   5           *
+   6           * @param key_cnt 按键消抖计数值，注意这是一个指针，可以使用‘&’进行取地址
+   7           *          为每个按键声明一个变量并赋初值为0，供本函数操作，不要在其他地方修�
+             -��该变量
+   8           * @param v 按键是否按下，按下输入1，松开输入0
+   9           * @return bit 返回按键事件，只在按键刚按下的时候返回一次1，其他时候返回0
+  10           */
+  11          /**
+  12           * @brief 按键消抖取边缘函数，该函数需要循环调用
+  13           *
+  14           * @param key_cnt 按键消抖计数值，注意这是一个指针，可以使用‘&’进行取地址
+  15           *          为每个按键声明一个变量并赋初值为0，供本函数操作，不要在其他地方修�
+             -��该变量
+  16           * @param v 按键是否按下，按下输入1，松开输入0
+  17           * @return bit 返回按键事件，只在按键刚按下的时候返回一次1，其他时候返回0
+  18           */
+  19          BOOL keyScan(uint8_t *key_cnt, uint8_t v)
+  20          {
+  21   1          if (v == 0)
+  22   1              *key_cnt = 0;
+  23   1          else
+  24   1              *key_cnt = (*key_cnt >= KEY_TH) ? KEY_TH : *key_cnt + 1;
+  25   1      
+  26   1          if (*key_cnt == (KEY_TH - 1))
+  27   1              return 1;
+  28   1          else
+  29   1              return 0;
+  30   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     39    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

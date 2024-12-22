@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   SYSTICK                                                           12/22/2024 19:51:54 PAGE 1   
+C51 COMPILER V9.59.0.0   SYSTICK                                                           12/23/2024 00:05:49 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE SYSTICK
@@ -10,38 +10,42 @@ line level    source
 
    1          #include "systick.h"
    2          
-   3          ulong tick = 0;
-   4          
-   5          void Timer0_Isr(void) interrupt 1
-   6          {
-   7   1          tick++;
-   8   1      }
-   9          
-  10          void Timer0_Init(void) // 1毫秒@24.000MHz
-  11          {
-  12   1          AUXR &= 0x7F; // 定时器时钟12T模式
-  13   1          TMOD &= 0xF0; // 设置定时器模式
-  14   1          TL0 = 0x30;   // 设置定时初始值
-  15   1          TH0 = 0xF8;   // 设置定时初始值
-  16   1          TF0 = 0;      // 清除TF0标志
-  17   1          TR0 = 1;      // 定时器0开始计时
-  18   1          ET0 = 1;      // 使能定时器0中断
-  19   1      }
-  20          
-  21          ulong Get_Tikc(void)
-  22          {
-  23   1      
-  24   1          return tick;
-  25   1      }
-  26          
-  27          void DelayTick(WORD tk)
-  28          {
-  29   1          ulong t;
-  30   1          t = tick + tk;
-  31   1          while (Get_Tikc() < t)
-  32   1          {
-  33   2          }
-  34   1      }
+   3          // 全局变量，用于记录系统滴答计数
+   4          ulong tick = 0;
+   5          
+   6          // 定时器0中断服务程序，每次中断时tick递增
+   7          void Timer0_Isr(void) interrupt 1
+   8          {
+   9   1          tick++;
+  10   1      }
+  11          
+  12          // 初始化定时器0，使其每1毫秒产生一次中断@24.000MHz
+  13          void Timer0_Init(void) // 1毫秒@24.000MHz
+  14          {
+  15   1          AUXR &= 0x7F; // 定时器时钟12T模式
+  16   1          TMOD &= 0xF0; // 设置定时器模式
+  17   1          TL0 = 0x30;   // 设置定时初始值
+  18   1          TH0 = 0xF8;   // 设置定时初始值
+  19   1          TF0 = 0;      // 清除TF0标志
+  20   1          TR0 = 1;      // 定时器0开始计时
+  21   1          ET0 = 1;      // 使能定时器0中断
+  22   1      }
+  23          
+  24          // 获取当前的滴答计数
+  25          ulong Get_Tikc(void)
+  26          {
+  27   1          return tick;
+  28   1      }
+  29          
+  30          // 延迟指定的滴答数
+  31          void DelayTick(WORD tk)
+  32          {
+  33   1          ulong t;
+  34   1          t = tick + tk;         // 计算延迟结束的滴答计数
+  35   1          while (Get_Tikc() < t) // 等待直到当前滴答计数达到目标值
+  36   1          {
+  37   2          }
+  38   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

@@ -431,6 +431,11 @@
               <FileType>1</FileType>
               <FilePath>.\divers\I2C.c</FilePath>
             </File>
+            <File>
+              <FileName>key_detect.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\divers\key_detect.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
