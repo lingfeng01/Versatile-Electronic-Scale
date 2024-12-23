@@ -9,7 +9,10 @@
         "STC32_STC8_USB.H": "cpp",
         "keyscan.h": "c",
         "main.h": "c",
-        "key_detect.h": "c"
+        "key_detect.h": "c",
+        "i2c.h": "c",
+        "1602lcd.h": "c",
+        "stdio.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
