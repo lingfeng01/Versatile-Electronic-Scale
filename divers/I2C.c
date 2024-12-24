@@ -1,16 +1,22 @@
 #include "I2C.h"
 
+void Wait()
+{
+
+    while (!(I2CMSST & 0x40))
+    {
+    }
+    I2CMSST &= ~0x40;
+}
 /**
  * @brief I2C启动
  *
  */
 void I2C_Start()
 {
-    busy = 1;
-    I2CMSCR = 0x81;
-    while (busy)
-    {
-    }
+
+    I2CMSCR = 0x01;
+    Wait();
 }
 
 /**
@@ -19,12 +25,8 @@ void I2C_Start()
  */
 void I2C_Stop()
 {
-
-    busy = 1;
     I2CMSCR = 0x86;
-    while (busy)
-    {
-    }
+    Wait();
 }
 
 /**
@@ -35,11 +37,8 @@ void I2C_Stop()
 void I2C_SendData(uchar dat)
 {
     I2CTXD = dat;
-    busy = 1;
-    I2CMSCR = 0x82;
-    while (busy)
-    {
-    }
+    I2CMSCR = 0x02;
+    Wait();
 }
 
 /**
@@ -48,11 +47,8 @@ void I2C_SendData(uchar dat)
  */
 void Recv_Ack()
 {
-    busy = 1;
-    I2CMSCR = 0x83;
-    while (busy)
-    {
-    }
+    I2CMSCR = 0x03;
+    Wait();
 }
 
 /**
@@ -62,11 +58,8 @@ void Recv_Ack()
  */
 char I2C_RecvData()
 {
-    busy = 1;
-    I2CMSCR = 0x84;
-    while (busy)
-    {
-    }
+    I2CMSCR = 0x04;
+    Wait();
     return I2CRXD;
 }
 
@@ -77,11 +70,8 @@ char I2C_RecvData()
 void I2C_SendAck()
 {
     I2CMSST = 0x00;
-    busy = 1;
-    I2CMSCR = 0x85;
-    while (busy)
-    {
-    }
+    I2CMSCR = 0x05;
+    Wait();
 }
 
 /**
@@ -91,16 +81,12 @@ void I2C_SendAck()
 void I2C_SendNAck()
 {
     I2CMSST = 0x01;
-    busy = 1;
-    I2CMSCR = 0x85;
-    while (busy)
-    {
-    }
+    I2CMSCR = 0x05;
+    Wait();
 }
 
 void I2C_Init()
 {
     I2CCFG = 0xe0;
     I2CMSST = 0x00;
-    EA = 1;
 }

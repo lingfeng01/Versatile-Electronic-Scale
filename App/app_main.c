@@ -6,10 +6,13 @@ char *USER_STCISPCMD = "@STCISP#"; // 可以自定义
 char LCDstr[15];
 BYTE usbStr[64];
 
-uint weight = 0;            // 显示重量
-uint threshold = 0;         // 阈值
-uint weight_k = 400;        // 重量系数
-uint usb_weight_k = 400;    // 重量系数
+int chishu = 0;
+uint weight = 0;         // 显示重量
+uint threshold = 0;      // 阈值
+uint weight_k = 400;     // 重量系数
+uchar weight_k2[16];     // 重量系数
+uint usb_weight_k = 400; // USB重量系数
+char *EEPROM_weight_k[16];
 uint weight_tare = 0;       // 皮重量
 uint weight_tare_after = 0; // 去皮后重量
 uint weight_count = 100;    // 计数重量
@@ -281,7 +284,7 @@ void Page_Switching()
     LED3 = 1;
     LCD1602_Wr_Command(0x01);
     Page++;
-    if (Page > 3)
+    if (Page > 4)
     {
         Page = 1;
     }
@@ -299,13 +302,13 @@ void usb_set_weight_K(BYTE UsbOut[], BYTE *size_t)
         usb_weight_k = (usbStr[1] - '0') * 100 + (usbStr[2] - '0') * 10 + (usbStr[3] - '0');
     }
     weight_k = usb_weight_k;
+    weight_k2[0] = usb_weight_k;
     sprintf(USB_Str, "k = %3d\n", weight_k);
     USB_SendData(USB_Str, 9); // Log打印重量系数
 }
 
 void app_main()
 {
-    int chishu = 0;
 
     // 扩展寄存器(XFR)访问使能
     P_SW2 |= 0x80;
@@ -325,6 +328,10 @@ void app_main()
 
     while (1)
     {
+
+        if (P54 == 0)
+        {
+        }
 
         Key1_event = keyScan(&Key1_cnt, !Key1); // 按键扫描
         Key2_event = keyScan(&Key2_cnt, !Key2); // 按键扫描
@@ -373,6 +380,10 @@ void app_main()
             {
                 Weight_threshold(3);
             }
+            if (Page == 4)
+            {
+                AT24C04_ReadPage(AT24C04_ADDRESS, 0x00, *EEPROM_weight_k, 4);
+            }
         }
         if (Key4_event == 1)
         {
@@ -409,6 +420,13 @@ void app_main()
                 }
                 Overweight_alarm();
                 break;
+            case 4:
+                sprintf(LCDstr, "k = %d", weight_k);
+                LCD1602_Display_String(1, 1, LCDstr);
+
+                sprintf(LCDstr, "Ek = %c", EEPROM_weight_k);
+                LCD1602_Display_String(2, 1, LCDstr);
+                break;
             default:
                 LCD1602_Wr_Command(0x01);
                 break;
@@ -428,14 +446,6 @@ BOOL usb_OUT_callback()
     // USB_SendData("ok", 2);
 
     usb_set_weight_K(UsbOutBuffer, &OutNumber); // 设置重量系数
+    AT24C04_WritePage(AT24C04_ADDRESS, 0x00, UsbOutBuffer, OutNumber);
     return 1;
-}
-
-void I2C_Isr() interrupt 24
-{
-    if (I2CMSST & 0x40)
-    {
-        I2CMSST = ~0x40;
-        busy = 0;
-    }
 }

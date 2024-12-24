@@ -8,7 +8,6 @@
 #include "systick.h"
 #include "HX711.h"
 #include "1602LCD.h"
-#include "I2C.h"
 #include "AT24C04.h"
 #include "key_detect.h"
 
@@ -26,8 +25,9 @@ sbit LED3 = P3 ^ 4;
 // 定义蜂鸣器
 sbit BEEP = P2 ^ 4;
 
-#define poll_time 0         // 重量轮询时间
-#define weigh_poll_time 500 // 重量轮询时间
+#define AT24C04_ADDRESS 0xA0 // AT24C04器件地址
+#define poll_time 0          // 重量轮询时间
+#define weigh_poll_time 500  // 重量轮询时间
 
 void IO_Init();
 void Display_PersonInfo();

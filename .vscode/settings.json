@@ -13,7 +13,8 @@
         "i2c.h": "c",
         "1602lcd.h": "c",
         "stdio.h": "c",
-        "STDIO.H": "cpp"
+        "STDIO.H": "cpp",
+        "at24c04.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

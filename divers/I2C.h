@@ -9,8 +9,7 @@
 sbit SDA = P1 ^ 4;
 sbit SCL = P1 ^ 5;
 
-static BOOL busy;
-
+void Wait();
 void I2C_Start();
 void I2C_Stop();
 
