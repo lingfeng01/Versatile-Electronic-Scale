@@ -436,6 +436,11 @@
               <FileType>1</FileType>
               <FilePath>.\divers\key_detect.c</FilePath>
             </File>
+            <File>
+              <FileName>AT24C04.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\divers\AT24C04.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

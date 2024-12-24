@@ -12,7 +12,8 @@
         "key_detect.h": "c",
         "i2c.h": "c",
         "1602lcd.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "STDIO.H": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

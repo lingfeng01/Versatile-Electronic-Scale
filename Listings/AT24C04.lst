@@ -1,0 +1,55 @@
+C51 COMPILER V9.59.0.0   AT24C04                                                           12/24/2024 17:25:26 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE AT24C04
+OBJECT MODULE PLACED IN .\Objects\AT24C04.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE divers\AT24C04.c LARGE OMF2 OPTIMIZE(8,SPEED) BROWSE INCDIR(.\App;.\dive
+                    -rs;.\main) DEBUG PRINT(.\Listings\AT24C04.lst) TABS(2) OBJECT(.\Objects\AT24C04.obj)
+
+line level    source
+
+   1          #include "AT24C04.h"
+   2          
+   3          void AT24C04_Write_Page(uchar addr, uchar Data[], uchar H_pageaddr, uchar L_pageaddr)
+   4          {
+   5   1          uint i;
+   6   1          uchar addrs;
+   7   1          uint Data_size = sizeof(Data);
+   8   1          if (Data_size > 15)
+   9   1          {
+  10   2              Data_size = 15;
+  11   2          }
+  12   1      
+  13   1          addrs = addr << 1;
+  14   1          I2C_Start();
+  15   1          I2C_SendData(addrs);
+  16   1          Recv_Ack();
+  17   1          I2C_SendData(H_pageaddr);
+  18   1          Recv_Ack();
+  19   1          I2C_SendData(L_pageaddr);
+  20   1          Recv_Ack();
+  21   1          for (i = 0; i < Data_size; i++)
+  22   1          {
+  23   2              I2C_SendData(Data[i]);
+  24   2              Recv_Ack();
+  25   2          }
+  26   1          I2C_Stop();
+  27   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    153    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----      11
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

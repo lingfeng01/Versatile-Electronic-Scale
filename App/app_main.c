@@ -210,7 +210,6 @@ void LCD_Display_Count()
  */
 void Overweight_alarm()
 {
-
     LCD1602_Display_String(2, 1, "Weight :"); // 显示标志
     weight = read_weight(weight_k, weight_base);
     sprintf(LCDstr, "%4d", weight);              // 格式化字符串
@@ -252,6 +251,7 @@ void Overweight_alarm()
  */
 void Weight_threshold(uint k)
 {
+
     if (k == 1)
     {
         threshold++;
@@ -277,6 +277,8 @@ void Weight_threshold(uint k)
  */
 void Page_Switching()
 {
+    BEEP = 1;
+    LED3 = 1;
     LCD1602_Wr_Command(0x01);
     Page++;
     if (Page > 3)
@@ -303,16 +305,18 @@ void usb_set_weight_K(BYTE UsbOut[], BYTE *size_t)
 
 void app_main()
 {
+    int chishu = 0;
+
     // 扩展寄存器(XFR)访问使能
     P_SW2 |= 0x80;
-    IO_Init(); // 初始化I/O端口
-
+    IO_Init();     // 初始化I/O端口
     usb_init();    // USB初始化
     Timer0_Init(); // 定时器0初始化
     EA = 1;        // 开启总中断
 
-    while (DeviceState != DEVSTATE_CONFIGURED) // 等待USB配置完成
+    while (DeviceState != DEVSTATE_CONFIGURED && chishu > 200) // 等待USB配置完成
     {
+        DelayTick(1);
     }
     LCD1602_Init();                   // 初始化LCD1602
     I2C_Init();                       // 初始化I2C
@@ -321,6 +325,7 @@ void app_main()
 
     while (1)
     {
+
         Key1_event = keyScan(&Key1_cnt, !Key1); // 按键扫描
         Key2_event = keyScan(&Key2_cnt, !Key2); // 按键扫描
         Key3_event = keyScan(&Key3_cnt, !Key3); // 按键扫描

@@ -9,6 +9,7 @@
 #include "HX711.h"
 #include "1602LCD.h"
 #include "I2C.h"
+#include "AT24C04.h"
 #include "key_detect.h"
 
 // 定义按键
