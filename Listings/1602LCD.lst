@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   1602LCD                                                           12/25/2024 14:50:49 PAGE 1   
+C51 COMPILER V9.59.0.0   1602LCD                                                           12/25/2024 22:31:59 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE 1602LCD
@@ -62,7 +62,7 @@ line level    source
   52           * @param  Column 列位置，范围：1~16
   53           * @retval 无
   54           */
-C51 COMPILER V9.59.0.0   1602LCD                                                           12/25/2024 14:50:49 PAGE 2   
+C51 COMPILER V9.59.0.0   1602LCD                                                           12/25/2024 22:31:59 PAGE 2   
 
   55          void LCD_SetCursor(uint Line, uint Column)
   56          {

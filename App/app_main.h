@@ -10,6 +10,7 @@
 #include "1602LCD.h"
 #include "AT24C04.h"
 #include "key_detect.h"
+#include "Serial4.h"
 
 // 定义按键
 sbit Key1 = P3 ^ 6;
@@ -30,6 +31,7 @@ sbit BEEP = P2 ^ 4;
 #define weigh_poll_time 500  // 重量轮询时间
 
 void IO_Init();
+
 void Display_PersonInfo();
 void LCD_Display_Weight();
 void tare_weight();

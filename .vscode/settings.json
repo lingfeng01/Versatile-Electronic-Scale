@@ -14,7 +14,8 @@
         "1602lcd.h": "c",
         "stdio.h": "c",
         "STDIO.H": "cpp",
-        "at24c04.h": "c"
+        "at24c04.h": "c",
+        "serial4.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

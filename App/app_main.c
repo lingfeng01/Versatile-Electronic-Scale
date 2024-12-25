@@ -4,6 +4,7 @@ char *USER_DEVICEDESC = NULL;
 char *USER_PRODUCTDESC = NULL;
 char *USER_STCISPCMD = "@STCISP#"; // 可以自定义
 char LCDstr[15];
+char uart4str[64];
 BYTE usbStr[64];
 
 int chishu = 0;
@@ -336,6 +337,7 @@ void app_main()
     IO_Init();                                                  // 初始化I/O端口
     usb_init();                                                 // USB初始化
     Timer0_Init();                                              // 定时器0初始化
+    Uart4_Init();                                               // 串口4初始化
     EA = 1;                                                     // 开启总中断
     while (DeviceState != DEVSTATE_CONFIGURED && chishu > 1000) // 等待USB配置完成
     {
@@ -419,8 +421,9 @@ void app_main()
 
         if (poll_neg_t + poll_time < Get_Tikc())
         {
-
-            // printf("Page = %d\n", Page); // Log打印页面
+            sprintf(uart4str, "串口4 OK! \n");
+            Uart4SendStr(uart4str);
+            //  printf("Page = %d\n", Page); // Log打印页面
             switch (Page)
             {
             case 1:

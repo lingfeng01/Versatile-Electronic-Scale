@@ -441,6 +441,11 @@
               <FileType>1</FileType>
               <FilePath>.\divers\AT24C04.c</FilePath>
             </File>
+            <File>
+              <FileName>Serial4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\divers\Serial4.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
