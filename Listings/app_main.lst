@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   APP_MAIN                                                          12/24/2024 23:40:52 PAGE 1   
+C51 COMPILER V9.59.0.0   APP_MAIN                                                          12/25/2024 14:50:49 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE APP_MAIN
@@ -17,468 +17,506 @@ line level    source
    7          BYTE usbStr[64];
    8          
    9          int chishu = 0;
-  10          uint weight = 0;         // 显示重量
-  11          uint threshold = 0;      // 阈值
-  12          uint weight_k = 400;     // 重量系数
-  13          uchar weight_k2[16];     // 重量系数
-  14          uint usb_weight_k = 400; // USB重量系数
-  15          char *EEPROM_weight_k[16];
-  16          uint weight_tare = 0;       // 皮重量
-  17          uint weight_tare_after = 0; // 去皮后重量
-  18          uint weight_count = 100;    // 计数重量
-  19          ulong weight_base = 0;      // 基准重量
-  20          ulong poll_neg_t = 0;       // 重量负值时间
-  21          ulong weigh_poll_neg_t = 0; // 重量负值时间
-  22          ulong beep_net_time = 0;    // 蜂鸣器负值时间
-  23          uint poll_beep_time = 1200; // 蜂鸣器轮询时间
-  24          uint Weight_difference = 0; // 重量差
-  25          
-  26          uchar Key1_cnt = 0;  // 按键消抖计数值
-  27          uchar Key2_cnt = 0;  // 按键消抖计数值
-  28          uchar Key3_cnt = 0;  // 按键消抖计数值
-  29          uchar Key4_cnt = 0;  // 按键消抖计数值
-  30          BOOL Key1_event = 0; // 按键事件
-  31          BOOL Key2_event = 0; // 按键事件
-  32          BOOL Key3_event = 0; // 按键事件
-  33          BOOL Key4_event = 0; // 按键事件
-  34          
-  35          char USB_Str[64];
-  36          uint Item_Count = 0; // 计数
-  37          int Page = 1;        // 页面
-  38          
-  39          /**
-  40           * @brief 初始化I/O端口，将模式寄存器设置为0。
-  41           *
-  42           * 此函数将所有模式寄存器（P0M0, P0M1, P1M0, P1M1, P2M0, P2M1,
-  43           * P4M0, P4M1, P5M0, P5M1, P6M0, P6M1, P7M0, P7M1）设置为0，
-  44           * 将所有引脚配置为通用I/O，无特殊功能。
-  45           */
-  46          void IO_Init()
-  47          {
-  48   1          P0M0 = 0x00;
-  49   1          P0M1 = 0x00;
-  50   1          P1M0 = 0x00;
-  51   1          P1M1 = 0x00;
-  52   1          P2M0 = 0x00;
-  53   1          P2M1 = 0x00;
-  54   1          P3M0 = 0x00;
-C51 COMPILER V9.59.0.0   APP_MAIN                                                          12/24/2024 23:40:52 PAGE 2   
+  10          uint weight = 0;                 // 显示重量
+  11          uint threshold = 0;              // 阈值
+  12          uint weight_k = 400;             // 重量系数
+  13          uint weight_k2 = 0;              // 重量系数
+  14          uint usb_weight_k = 400;         // USB重量系数
+  15          uchar EEPROM_weight_k[16] = {0}; // EEPROM重量系数
+  16          uint weight_tare = 0;            // 皮重量
+  17          uint weight_tare_after = 0;      // 去皮后重量
+  18          uint weight_count = 100;         // 计数重量
+  19          ulong weight_base = 0;           // 基准重量
+  20          ulong poll_neg_t = 0;            // 重量负值时间
+  21          ulong weigh_poll_neg_t = 0;      // 重量负值时间
+  22          ulong beep_neg_time = 0;         // 蜂鸣器负值时间
+  23          uint beep_poll_time = 1200;      // 蜂鸣器轮询时间
+  24          uint EEPROM_poll_neg_t = 0;      // EEPROM负值时间
+  25          uint EEPROM_poll_time = 3000;    // EEPROM轮询时间
+  26          uint Weight_difference = 0;      // 重量差
+  27          
+  28          uchar Key1_cnt = 0;  // 按键消抖计数值
+  29          uchar Key2_cnt = 0;  // 按键消抖计数值
+  30          uchar Key3_cnt = 0;  // 按键消抖计数值
+  31          uchar Key4_cnt = 0;  // 按键消抖计数值
+  32          BOOL Key1_event = 0; // 按键事件
+  33          BOOL Key2_event = 0; // 按键事件
+  34          BOOL Key3_event = 0; // 按键事件
+  35          BOOL Key4_event = 0; // 按键事件
+  36          
+  37          char USB_Str[64];
+  38          uint Item_Count = 0; // 计数
+  39          int Page = 1;        // 页面
+  40          
+  41          /**
+  42           * @brief 初始化I/O端口，将模式寄存器设置为0。
+  43           *
+  44           * 此函数将所有模式寄存器（P0M0, P0M1, P1M0, P1M1, P2M0, P2M1,
+  45           * P4M0, P4M1, P5M0, P5M1, P6M0, P6M1, P7M0, P7M1）设置为0，
+  46           * 将所有引脚配置为通用I/O，无特殊功能。
+  47           */
+  48          void IO_Init()
+  49          {
+  50   1          P0M0 = 0x00;
+  51   1          P0M1 = 0x00;
+  52   1          P1M0 = 0x00;
+  53   1          P1M1 = 0x00;
+  54   1          P2M0 = 0x00;
+C51 COMPILER V9.59.0.0   APP_MAIN                                                          12/25/2024 14:50:49 PAGE 2   
 
-  55   1          P3M1 = 0x00;
-  56   1          P4M0 = 0x00;
-  57   1          P4M1 = 0x00;
-  58   1          P5M0 = 0x00;
-  59   1          P5M1 = 0x00;
-  60   1          P6M0 = 0x00;
-  61   1          P6M1 = 0x00;
-  62   1          P7M0 = 0x00;
-  63   1          P7M1 = 0x00;
-  64   1      }
-  65          
-  66          /**
-  67           * @brief 任务一
-  68           * 显示个人信息在LCD1602屏幕上
-  69           *
-  70           * 该函数LCD1602屏幕上显示个人信息。
-  71           * 首先显示学号“20235603023185”，然后延迟500毫秒。
-  72           * 接着显示姓名“LinZhiKai”，再延迟2000毫秒。
-  73           * 最后清除屏幕显示。
-  74           */
-  75          void Display_PersonInfo()
-  76          {
-  77   1          sprintf(LCDstr, "%s", "20235603023185");
-  78   1          LCD1602_Display_String(1, 2, LCDstr);
-  79   1          DelayTick(500);
-  80   1          sprintf(LCDstr, "%s", "LinZhiKai");
-  81   1          LCD1602_Display_String(2, 4, LCDstr);
-  82   1          DelayTick(2000);
-  83   1          LCD1602_Wr_Command(0x01);
-  84   1      }
-  85          /**
-  86           * @brief 任务三
-  87           * 显示重量信息在LCD1602屏幕上
-  88           *
-  89           * 该函数LCD1602屏幕上显示重量信息。
-  90           * 首先显示标志和单位“Weight :”，“g”。
-  91           * 接着显示重量值“weight”，延迟500毫秒。
-  92           * 如果重量值为0，则清除重量值。
-  93           */
-  94          void LCD_Display_Weight()
-  95          {
-  96   1      
-  97   1          LCD1602_Display_String(1, 1, "Pi :");     // 显示标志
-  98   1          LCD1602_Display_String(1, 10, "g");       // 显示单位
-  99   1          LCD1602_Display_String(2, 1, "Weight :"); // 显示标志
- 100   1          LCD1602_Display_String(2, 15, "g");       // 显示单位
- 101   1      
- 102   1          sprintf(LCDstr, "%4d", weight_tare);  // 格式化字符串
- 103   1          LCD1602_Display_String(1, 5, LCDstr); // LCD显示去皮重量值
- 104   1          if (weigh_poll_neg_t + weigh_poll_time < Get_Tikc())
- 105   1          {
- 106   2              weight_tare_after = read_weight(weight_k, weight_base) - weight_tare; // 读取重量
- 107   2              printf("weight_base = %lu\n", weight_base);                           // Log打印基准重量
- 108   2              printf("weight = %d\n", weight_tare_after);                           // Log打印重量
- 109   2              weigh_poll_neg_t = Get_Tikc();
- 110   2          }
- 111   1      
- 112   1          sprintf(LCDstr, "%4d", weight_tare_after); // 格式化字符串
- 113   1          LCD1602_Display_String(2, 10, LCDstr);     // LCD显示重量值
- 114   1          if (weight_tare_after <= 0)
- 115   1          {
- 116   2              LCD1602_Display_String(2, 10, "   0"); // 清除重量值
-C51 COMPILER V9.59.0.0   APP_MAIN                                                          12/24/2024 23:40:52 PAGE 3   
+  55   1          P2M1 = 0x00;
+  56   1          P3M0 = 0x00;
+  57   1          P3M1 = 0x00;
+  58   1          P4M0 = 0x00;
+  59   1          P4M1 = 0x00;
+  60   1          P5M0 = 0x00;
+  61   1          P5M1 = 0x00;
+  62   1          P6M0 = 0x00;
+  63   1          P6M1 = 0x00;
+  64   1          P7M0 = 0x00;
+  65   1          P7M1 = 0x00;
+  66   1      }
+  67          
+  68          /**
+  69           * @brief 任务一
+  70           * 显示个人信息在LCD1602屏幕上
+  71           *
+  72           * 该函数LCD1602屏幕上显示个人信息。
+  73           * 首先显示学号“20235603023185”，然后延迟500毫秒。
+  74           * 接着显示姓名“LinZhiKai”，再延迟2000毫秒。
+  75           * 最后清除屏幕显示。
+  76           */
+  77          void Display_PersonInfo()
+  78          {
+  79   1          sprintf(LCDstr, "%s", "20235603023185");
+  80   1          LCD1602_Display_String(1, 2, LCDstr);
+  81   1          DelayTick(500);
+  82   1          sprintf(LCDstr, "%s", "LinZhiKai");
+  83   1          LCD1602_Display_String(2, 4, LCDstr);
+  84   1          DelayTick(2000);
+  85   1          LCD1602_Wr_Command(0x01);
+  86   1      }
+  87          /**
+  88           * @brief 任务三
+  89           * 显示重量信息在LCD1602屏幕上
+  90           *
+  91           * 该函数LCD1602屏幕上显示重量信息。
+  92           * 首先显示标志和单位“Weight :”，“g”。
+  93           * 接着显示重量值“weight”，延迟500毫秒。
+  94           * 如果重量值为0，则清除重量值。
+  95           */
+  96          void LCD_Display_Weight()
+  97          {
+  98   1      
+  99   1          LCD1602_Display_String(1, 1, "Pi :");     // 显示标志
+ 100   1          LCD1602_Display_String(1, 10, "g");       // 显示单位
+ 101   1          LCD1602_Display_String(2, 1, "Weight :"); // 显示标志
+ 102   1          LCD1602_Display_String(2, 15, "g");       // 显示单位
+ 103   1      
+ 104   1          sprintf(LCDstr, "%4d", weight_tare);  // 格式化字符串
+ 105   1          LCD1602_Display_String(1, 5, LCDstr); // LCD显示去皮重量值
+ 106   1          if (weigh_poll_neg_t + weigh_poll_time < Get_Tikc())
+ 107   1          {
+ 108   2              weight_tare_after = read_weight(weight_k, weight_base) - weight_tare; // 读取重量
+ 109   2              printf("weight_base = %lu\n", weight_base);                           // Log打印基准重量
+ 110   2              printf("weight = %d\n", weight_tare_after);                           // Log打印重量
+ 111   2              printf("weight_k = %3d\n", weight_k);                                 // Log打印重量系数
+ 112   2              weigh_poll_neg_t = Get_Tikc();
+ 113   2          }
+ 114   1      
+ 115   1          sprintf(LCDstr, "%4d", weight_tare_after); // 格式化字符串
+ 116   1          LCD1602_Display_String(2, 10, LCDstr);     // LCD显示重量值
+C51 COMPILER V9.59.0.0   APP_MAIN                                                          12/25/2024 14:50:49 PAGE 3   
 
- 117   2          }
- 118   1      }
- 119          /**
- 120           * @brief 任务三
- 121           * 去皮
- 122           * 该函数去皮。
- 123           */
- 124          void tare_weight()
- 125          {
- 126   1      
- 127   1          if (Key3_event == 1 && Page == 1)
- 128   1          {
- 129   2              weight_tare = read_weight(weight_k, weight_base); // 读取重量
- 130   2              printf("weight_tare = %d\n", weight_tare);        // Log打印去皮重量
- 131   2          }
- 132   1      }
- 133          
- 134          /**
- 135           * @brief 任务四
- 136           * 计数
- 137           * 该函数计数。
- 138           */
- 139          void Count_weight()
- 140          {
- 141   1          if (read_weight(weight_k, weight_base) > 1000)
- 142   1          {
- 143   2              weight_count = 999;
- 144   2          }
- 145   1          else
+ 117   1          if (weight_tare_after <= 0)
+ 118   1          {
+ 119   2              LCD1602_Display_String(2, 10, "   0"); // 清除重量值
+ 120   2          }
+ 121   1      }
+ 122          /**
+ 123           * @brief 任务三
+ 124           * 去皮
+ 125           * 该函数去皮。
+ 126           */
+ 127          void tare_weight()
+ 128          {
+ 129   1      
+ 130   1          if (Key3_event == 1 && Page == 1)
+ 131   1          {
+ 132   2              weight_tare = read_weight(weight_k, weight_base); // 读取重量
+ 133   2              printf("weight_tare = %d\n", weight_tare);        // Log打印去皮重量
+ 134   2              printf("weight_k = %3d\n", weight_k);             // Log打印重量系数
+ 135   2          }
+ 136   1      }
+ 137          
+ 138          /**
+ 139           * @brief 任务四
+ 140           * 计数
+ 141           * 该函数计数。
+ 142           */
+ 143          void Count_weight()
+ 144          {
+ 145   1          if (read_weight(weight_k, weight_base) > 1000)
  146   1          {
- 147   2              weight_count = read_weight(weight_k, weight_base);
+ 147   2              weight_count = 999;
  148   2          }
- 149   1      }
- 150          
- 151          /**
- 152           * @brief 任务四
- 153           * 显示计数信息在LCD1602屏幕上
- 154           *
- 155           * 该函数LCD1602屏幕上显示计数信息。
- 156           * 首先显示标志“Count :”。
- 157           * 接着显示计数值“Item_Count”。
- 158           * 如果计数值大于100，则计数值为100。
- 159           * 最后显示单位“g”。
- 160           */
- 161          void LCD_Display_Count()
- 162          {
- 163   1      
- 164   1          LCD1602_Display_String(2, 1, "Weight :"); // 显示标志
- 165   1          LCD1602_Display_String(2, 15, "g");       // 显示单位
- 166   1          LCD1602_Display_String(1, 1, "Count :");  // 显示标志
- 167   1          LCD1602_Display_String(1, 12, "x");       // 显示标志
- 168   1          LCD1602_Display_String(1, 16, "g");       // 显示单位
- 169   1      
- 170   1          if (weigh_poll_neg_t + weigh_poll_time < Get_Tikc())
- 171   1          {
- 172   2              weight = read_weight(weight_k, weight_base); // 读取重量
- 173   2              printf("weight = %d\n", weight);             // Log打印重量值
- 174   2              printf("weight_count = %d\n", weight_count); // Log打印计数重量值
- 175   2              printf("Item_Count = %d\n", Item_Count);     // Log打印计数值
- 176   2              weigh_poll_neg_t = Get_Tikc();
- 177   2          }
- 178   1          sprintf(LCDstr, "%4d", weight);        // 格式化字符串
-C51 COMPILER V9.59.0.0   APP_MAIN                                                          12/24/2024 23:40:52 PAGE 4   
+ 149   1          else
+ 150   1          {
+ 151   2              weight_count = read_weight(weight_k, weight_base);
+ 152   2          }
+ 153   1      }
+ 154          
+ 155          /**
+ 156           * @brief 任务四
+ 157           * 显示计数信息在LCD1602屏幕上
+ 158           *
+ 159           * 该函数LCD1602屏幕上显示计数信息。
+ 160           * 首先显示标志“Count :”。
+ 161           * 接着显示计数值“Item_Count”。
+ 162           * 如果计数值大于100，则计数值为100。
+ 163           * 最后显示单位“g”。
+ 164           */
+ 165          void LCD_Display_Count()
+ 166          {
+ 167   1      
+ 168   1          LCD1602_Display_String(2, 1, "Weight :"); // 显示标志
+ 169   1          LCD1602_Display_String(2, 15, "g");       // 显示单位
+ 170   1          LCD1602_Display_String(1, 1, "Count :");  // 显示标志
+ 171   1          LCD1602_Display_String(1, 12, "x");       // 显示标志
+ 172   1          LCD1602_Display_String(1, 16, "g");       // 显示单位
+ 173   1      
+ 174   1          if (weigh_poll_neg_t + weigh_poll_time < Get_Tikc())
+ 175   1          {
+ 176   2              weight = read_weight(weight_k, weight_base); // 读取重量
+ 177   2              printf("weight = %d\n", weight);             // Log打印重量值
+ 178   2              printf("weight_count = %d\n", weight_count); // Log打印计数重量值
+C51 COMPILER V9.59.0.0   APP_MAIN                                                          12/25/2024 14:50:49 PAGE 4   
 
- 179   1          LCD1602_Display_String(2, 10, LCDstr); // LCD显示重量值
- 180   1          if (weight <= 0)
- 181   1          {
- 182   2              LCD1602_Display_String(2, 10, "   0"); // 清除重量值
- 183   2          }
- 184   1      
- 185   1          if (weight_count == 0)
+ 179   2              printf("Item_Count = %d\n", Item_Count);     // Log打印计数值
+ 180   2              printf("weight_k = %3d\n", weight_k);        // Log打印重量系数
+ 181   2              weigh_poll_neg_t = Get_Tikc();
+ 182   2          }
+ 183   1          sprintf(LCDstr, "%4d", weight);        // 格式化字符串
+ 184   1          LCD1602_Display_String(2, 10, LCDstr); // LCD显示重量值
+ 185   1          if (weight <= 0)
  186   1          {
- 187   2              LCD1602_Display_String(1, 13, "  0"); // 清除重量值
- 188   2              Item_Count = 0;
- 189   2          }
- 190   1          else
+ 187   2              LCD1602_Display_String(2, 10, "   0"); // 清除重量值
+ 188   2          }
+ 189   1      
+ 190   1          if (weight_count == 0)
  191   1          {
- 192   2              Item_Count = weight / weight_count; // 计数
- 193   2          }
- 194   1          sprintf(LCDstr, "%3d", weight_count);  // 格式化字符串
- 195   1          LCD1602_Display_String(1, 13, LCDstr); // 显示个重量值
- 196   1      
- 197   1          if (Item_Count >= 100)
- 198   1          {
- 199   2              Item_Count = 100;
- 200   2          }
- 201   1          sprintf(LCDstr, "%3d", Item_Count);   // 格式化字符串
- 202   1          LCD1602_Display_String(1, 8, LCDstr); // LCD显示计数值
- 203   1          if (Item_Count == 0)
- 204   1          {
- 205   2              LCD1602_Display_String(1, 8, "  0"); // 清除计数值
- 206   2          }
- 207   1      }
- 208          
- 209          /**
- 210           * @brief 任务五
- 211           * 超重报警
- 212           * 该函数超重报警。
- 213           */
- 214          void Overweight_alarm()
- 215          {
- 216   1          LCD1602_Display_String(2, 1, "Weight :"); // 显示标志
- 217   1          weight = read_weight(weight_k, weight_base);
- 218   1          sprintf(LCDstr, "%4d", weight);              // 格式化字符串
- 219   1          LCD1602_Display_String(2, 10, LCDstr);       // LCD显示重量值
- 220   1          LCD1602_Display_String(2, 15, "g");          // 显示单位
- 221   1          LCD1602_Display_String(1, 1, "threshold :"); // 显示标志
- 222   1          sprintf(LCDstr, "%3d", threshold);           // 格式化字符串
- 223   1          LCD1602_Display_String(1, 12, LCDstr);       // 显示标志
- 224   1          LCD1602_Display_String(1, 16, "g");          // 显示单位
- 225   1          Weight_difference = weight / threshold;      // 计算重量差
- 226   1          if (threshold == 0)
- 227   1          {
- 228   2              Weight_difference = 0;
- 229   2          }
- 230   1      
- 231   1          if (weight > threshold && weight != 0)
+ 192   2              LCD1602_Display_String(1, 13, "  0"); // 清除重量值
+ 193   2              Item_Count = 0;
+ 194   2          }
+ 195   1          else
+ 196   1          {
+ 197   2              Item_Count = weight / weight_count; // 计数
+ 198   2          }
+ 199   1          sprintf(LCDstr, "%3d", weight_count);  // 格式化字符串
+ 200   1          LCD1602_Display_String(1, 13, LCDstr); // 显示个重量值
+ 201   1      
+ 202   1          if (Item_Count >= 100)
+ 203   1          {
+ 204   2              Item_Count = 100;
+ 205   2          }
+ 206   1          sprintf(LCDstr, "%3d", Item_Count);   // 格式化字符串
+ 207   1          LCD1602_Display_String(1, 8, LCDstr); // LCD显示计数值
+ 208   1          if (Item_Count == 0)
+ 209   1          {
+ 210   2              LCD1602_Display_String(1, 8, "  0"); // 清除计数值
+ 211   2          }
+ 212   1      }
+ 213          
+ 214          /**
+ 215           * @brief 任务五
+ 216           * 超重报警
+ 217           * 该函数超重报警。
+ 218           */
+ 219          void Overweight_alarm()
+ 220          {
+ 221   1          LCD1602_Display_String(2, 1, "Weight :"); // 显示标志
+ 222   1          weight = read_weight(weight_k, weight_base);
+ 223   1          sprintf(LCDstr, "%4d", weight);              // 格式化字符串
+ 224   1          LCD1602_Display_String(2, 10, LCDstr);       // LCD显示重量值
+ 225   1          LCD1602_Display_String(2, 15, "g");          // 显示单位
+ 226   1          LCD1602_Display_String(1, 1, "threshold :"); // 显示标志
+ 227   1          sprintf(LCDstr, "%3d", threshold);           // 格式化字符串
+ 228   1          LCD1602_Display_String(1, 12, LCDstr);       // 显示标志
+ 229   1          LCD1602_Display_String(1, 16, "g");          // 显示单位
+ 230   1          Weight_difference = weight / threshold;      // 计算重量差
+ 231   1          if (threshold == 0)
  232   1          {
- 233   2              if (beep_net_time + poll_beep_time - (weight / (threshold + 50) * 100) < Get_Tikc())
- 234   2              {
- 235   3                  BEEP = ~BEEP;
- 236   3                  LED3 = ~LED3;
- 237   3                  LED1 = 0;
- 238   3                  printf("weight = %4d\n", weight);
- 239   3                  printf("threshold = %3d", threshold);
- 240   3                  beep_net_time = Get_Tikc();
-C51 COMPILER V9.59.0.0   APP_MAIN                                                          12/24/2024 23:40:52 PAGE 5   
+ 233   2              Weight_difference = 0;
+ 234   2          }
+ 235   1      
+ 236   1          if (weight > threshold && weight != 0)
+ 237   1          {
+ 238   2              if (beep_neg_time + beep_poll_time - (weight / (threshold + 50) * 100) < Get_Tikc())
+ 239   2              {
+ 240   3                  BEEP = ~BEEP;
+C51 COMPILER V9.59.0.0   APP_MAIN                                                          12/25/2024 14:50:49 PAGE 5   
 
- 241   3              }
- 242   2          }
- 243   1          else
- 244   1          {
- 245   2              BEEP = 1;
- 246   2              LED3 = 1;
- 247   2          }
- 248   1      }
- 249          
- 250          /**
- 251           * @brief 任务五
- 252           * 重量阈值
- 253           * 该函数重量阈值。
- 254           */
- 255          void Weight_threshold(uint k)
- 256          {
- 257   1      
- 258   1          if (k == 1)
- 259   1          {
- 260   2              threshold++;
- 261   2          }
- 262   1          else if (k == 2 && threshold > 0)
- 263   1          {
- 264   2              threshold--;
- 265   2          }
- 266   1          else if (k == 3)
- 267   1          {
- 268   2              /* code */
- 269   2          }
- 270   1          else if (k == 4)
- 271   1          {
- 272   2              threshold = read_weight(weight_k, weight_base);
- 273   2          }
- 274   1      }
- 275          
- 276          /**
- 277           * @brief 任务六
- 278           * 页面切换
- 279           * 该函数页面切换。
- 280           */
- 281          void Page_Switching()
- 282          {
- 283   1          BEEP = 1;
- 284   1          LED3 = 1;
- 285   1          LCD1602_Wr_Command(0x01);
- 286   1          Page++;
- 287   1          if (Page > 4)
- 288   1          {
- 289   2              Page = 1;
- 290   2          }
- 291   1      }
- 292          
- 293          void usb_set_weight_K(BYTE UsbOut[], BYTE *size_t)
- 294          {
- 295   1          uint i;
- 296   1          for (i = 0; i < *size_t; i++)
- 297   1          {
- 298   2              usbStr[i] = UsbOut[i];
- 299   2          }
- 300   1          if (usbStr[0] == '#')
- 301   1          {
- 302   2              usb_weight_k = (usbStr[1] - '0') * 100 + (usbStr[2] - '0') * 10 + (usbStr[3] - '0');
-C51 COMPILER V9.59.0.0   APP_MAIN                                                          12/24/2024 23:40:52 PAGE 6   
+ 241   3                  LED3 = ~LED3;
+ 242   3                  LED1 = 0;
+ 243   3                  printf("weight = %4d\n", weight);     // Log打印重量值
+ 244   3                  printf("threshold = %3d", threshold); // Log打印阈值
+ 245   3                  printf("weight_k = %3d\n", weight_k); // Log打印重量系数
+ 246   3                  beep_neg_time = Get_Tikc();
+ 247   3              }
+ 248   2          }
+ 249   1          else
+ 250   1          {
+ 251   2              BEEP = 1;
+ 252   2              LED3 = 1;
+ 253   2          }
+ 254   1      }
+ 255          
+ 256          /**
+ 257           * @brief 任务五
+ 258           * 重量阈值
+ 259           * 该函数重量阈值。
+ 260           */
+ 261          void Weight_threshold(uint k)
+ 262          {
+ 263   1      
+ 264   1          if (k == 1)
+ 265   1          {
+ 266   2              threshold++;
+ 267   2          }
+ 268   1          else if (k == 2 && threshold > 0)
+ 269   1          {
+ 270   2              threshold--;
+ 271   2          }
+ 272   1          else if (k == 3)
+ 273   1          {
+ 274   2              /* code */
+ 275   2          }
+ 276   1          else if (k == 4)
+ 277   1          {
+ 278   2              threshold = read_weight(weight_k, weight_base);
+ 279   2          }
+ 280   1      }
+ 281          
+ 282          /**
+ 283           * @brief 任务六
+ 284           * 页面切换
+ 285           * 该函数页面切换。
+ 286           */
+ 287          void Page_Switching()
+ 288          {
+ 289   1          BEEP = 1;
+ 290   1          LED3 = 1;
+ 291   1          LCD1602_Wr_Command(0x01);
+ 292   1          Page++;
+ 293   1          if (Page > 4)
+ 294   1          {
+ 295   2              Page = 1;
+ 296   2          }
+ 297   1      }
+ 298          
+ 299          void usb_set_weight_K(BYTE UsbOut[], BYTE *size_t)
+ 300          {
+ 301   1          uint i;
+ 302   1          for (i = 0; i < *size_t; i++)
+C51 COMPILER V9.59.0.0   APP_MAIN                                                          12/25/2024 14:50:49 PAGE 6   
 
- 303   2          }
- 304   1          weight_k = usb_weight_k;
- 305   1          weight_k2[0] = usb_weight_k;
- 306   1          sprintf(USB_Str, "k = %3d\n", weight_k);
- 307   1          USB_SendData(USB_Str, 9); // Log打印重量系数
- 308   1      }
- 309          
- 310          void app_main()
- 311          {
- 312   1      
- 313   1          // 扩展寄存器(XFR)访问使能
- 314   1          P_SW2 |= 0x80;
- 315   1          IO_Init();     // 初始化I/O端口
- 316   1          usb_init();    // USB初始化
- 317   1          Timer0_Init(); // 定时器0初始化
- 318   1          EA = 1;        // 开启总中断
- 319   1      
- 320   1          while (DeviceState != DEVSTATE_CONFIGURED && chishu > 200) // 等待USB配置完成
- 321   1          {
- 322   2              DelayTick(1);
- 323   2          }
- 324   1          LCD1602_Init();                   // 初始化LCD1602
- 325   1          I2C_Init();                       // 初始化I2C
- 326   1          Display_PersonInfo();             // 显示个人信息
- 327   1          weight_base = read_weight_base(); // 读取基准重量
- 328   1      
- 329   1          while (1)
- 330   1          {
- 331   2      
- 332   2              if (P54 == 0)
- 333   2              {
- 334   3              }
- 335   2      
- 336   2              Key1_event = keyScan(&Key1_cnt, !Key1); // 按键扫描
- 337   2              Key2_event = keyScan(&Key2_cnt, !Key2); // 按键扫描
- 338   2              Key3_event = keyScan(&Key3_cnt, !Key3); // 按键扫描
- 339   2              Key4_event = keyScan(&Key4_cnt, !Key4); // 按键扫描
- 340   2              if (Key1_event == 1)
- 341   2              {
- 342   3                  if (Page == 1)
- 343   3                  {
- 344   4                      /* code */
- 345   4                  }
- 346   3                  if (Page == 2)
- 347   3                  {
- 348   4                      Count_weight();
- 349   4                  }
- 350   3                  if (Page == 3)
- 351   3                  {
- 352   4                  }
- 353   3              }
- 354   2              if (Key2_event == 1)
- 355   2              {
- 356   3                  if (Page == 1)
- 357   3                  {
- 358   4                      /* code */
- 359   4                  }
- 360   3                  if (Page == 2)
- 361   3                  {
- 362   4                      /* code */
- 363   4                  }
- 364   3                  if (Page == 3)
-C51 COMPILER V9.59.0.0   APP_MAIN                                                          12/24/2024 23:40:52 PAGE 7   
+ 303   1          {
+ 304   2              usbStr[i] = UsbOut[i];
+ 305   2          }
+ 306   1          if (usbStr[0] == '#')
+ 307   1          {
+ 308   2              usb_weight_k = (usbStr[1] - '0') * 100 + (usbStr[2] - '0') * 10 + (usbStr[3] - '0'); // 设置重�
+             -��系数
+ 309   2              AT24C04_WritePage(AT24C04_ADDRESS, 0x00, UsbOut);                                    // 写入EEPR
+             -OM重量系数
+ 310   2          }
+ 311   1          weight_k = usb_weight_k;
+ 312   1          sprintf(USB_Str, "k = %3d\n", weight_k);
+ 313   1          USB_SendData(USB_Str, 9); // Log打印重量系数
+ 314   1      }
+ 315          
+ 316          /**
+ 317           * @brief EEPROM轮询读取
+ 318           * 该函数EEPROM轮询读取。
+ 319           */
+ 320          void EEPROM_Poll_Read()
+ 321          {
+ 322   1          if (EEPROM_poll_neg_t + EEPROM_poll_time < Get_Tikc())
+ 323   1          {
+ 324   2              AT24C04_ReadPage(AT24C04_ADDRESS, 0x00, EEPROM_weight_k, 4);                                      
+             -           // 读取EEPROM重量系数
+ 325   2              weight_k2 = (EEPROM_weight_k[1] - '0') * 100 + (EEPROM_weight_k[2] - '0') * 10 + (EEPROM_weight_k[
+             -3] - '0'); // 设置重量系数
+ 326   2              printf("Ek = %d\n", weight_k2);                                                                   
+             -           // Log打印重量系数
+ 327   2              EEPROM_poll_neg_t = Get_Tikc();                                                                   
+             -           // 重置EEPROM负值时间
+ 328   2          }
+ 329   1      }
+ 330          
+ 331          void app_main()
+ 332          {
+ 333   1      
+ 334   1          // 扩展寄存器(XFR)访问使能
+ 335   1          P_SW2 |= 0x80;
+ 336   1          IO_Init();                                                  // 初始化I/O端口
+ 337   1          usb_init();                                                 // USB初始化
+ 338   1          Timer0_Init();                                              // 定时器0初始化
+ 339   1          EA = 1;                                                     // 开启总中断
+ 340   1          while (DeviceState != DEVSTATE_CONFIGURED && chishu > 1000) // 等待USB配置完成
+ 341   1          {
+ 342   2              DelayTick(1);
+ 343   2          }
+ 344   1          LCD1602_Init();       // 初始化LCD1602
+ 345   1          I2C_Init();           // 初始化I2C
+ 346   1          Display_PersonInfo(); // 显示个人信息
+ 347   1          AT24C04_ReadPage(AT24C04_ADDRESS, 0x00, EEPROM_weight_k, 4);
+ 348   1          weight_k2 = (EEPROM_weight_k[1] - '0') * 100 + (EEPROM_weight_k[2] - '0') * 10 + (EEPROM_weight_k[3] -
+             - '0');
+ 349   1          printf("Ek = %d\n", weight_k2);
+ 350   1          weight_k = weight_k2;
+ 351   1          weight_base = read_weight_base(); // 读取基准重量
+ 352   1          while (1)
+ 353   1          {
+ 354   2      
+ 355   2              if (P54 == 0)
+ 356   2              {
+ 357   3              }
+C51 COMPILER V9.59.0.0   APP_MAIN                                                          12/25/2024 14:50:49 PAGE 7   
 
- 365   3                  {
- 366   4                  }
- 367   3              }
- 368   2              if (Key3_event == 1)
- 369   2              {
- 370   3      
- 371   3                  if (Page == 1)
- 372   3                  {
- 373   4                      tare_weight();
- 374   4                  }
- 375   3                  if (Page == 2)
- 376   3                  {
- 377   4                      /* code */
- 378   4                  }
- 379   3                  if (Page == 3)
+ 358   2      
+ 359   2              Key1_event = keyScan(&Key1_cnt, !Key1); // 按键扫描
+ 360   2              Key2_event = keyScan(&Key2_cnt, !Key2); // 按键扫描
+ 361   2              Key3_event = keyScan(&Key3_cnt, !Key3); // 按键扫描
+ 362   2              Key4_event = keyScan(&Key4_cnt, !Key4); // 按键扫描
+ 363   2              if (Key1_event == 1)
+ 364   2              {
+ 365   3                  if (Page == 1)
+ 366   3                  {
+ 367   4                      /* code */
+ 368   4                  }
+ 369   3                  if (Page == 2)
+ 370   3                  {
+ 371   4                      Count_weight();
+ 372   4                  }
+ 373   3                  if (Page == 3)
+ 374   3                  {
+ 375   4                  }
+ 376   3              }
+ 377   2              if (Key2_event == 1)
+ 378   2              {
+ 379   3                  if (Page == 1)
  380   3                  {
- 381   4                      Weight_threshold(3);
+ 381   4                      /* code */
  382   4                  }
- 383   3                  if (Page == 4)
+ 383   3                  if (Page == 2)
  384   3                  {
- 385   4                      AT24C04_ReadPage(AT24C04_ADDRESS, 0x00, *EEPROM_weight_k, 4);
+ 385   4                      /* code */
  386   4                  }
- 387   3              }
- 388   2              if (Key4_event == 1)
- 389   2              {
- 390   3      
- 391   3                  Page_Switching();
- 392   3              }
- 393   2      
- 394   2              if (poll_neg_t + poll_time < Get_Tikc())
- 395   2              {
- 396   3      
- 397   3                  // printf("Page = %d\n", Page); // Log打印页面
- 398   3                  switch (Page)
+ 387   3                  if (Page == 3)
+ 388   3                  {
+ 389   4                  }
+ 390   3              }
+ 391   2              if (Key3_event == 1)
+ 392   2              {
+ 393   3      
+ 394   3                  if (Page == 1)
+ 395   3                  {
+ 396   4                      tare_weight();
+ 397   4                  }
+ 398   3                  if (Page == 2)
  399   3                  {
- 400   4                  case 1:
- 401   4      
- 402   4                      LCD_Display_Weight(); // 显示重量
- 403   4      
- 404   4                      break;
- 405   4                  case 2:
- 406   4                      LCD_Display_Count(); // 显示计数
- 407   4                      break;
- 408   4                  case 3:
- 409   4                      if (Key1 == 0 && Key2 == 1 && Page == 3)
- 410   4                      {
- 411   5                          Weight_threshold(1);
- 412   5                      }
- 413   4                      if (Key2 == 0 && Key1 == 1 && Page == 3)
- 414   4                      {
- 415   5                          Weight_threshold(2);
- 416   5                      }
- 417   4                      if (Key1 == 0 && Key2 == 0 && Page == 3)
- 418   4                      {
- 419   5                          Weight_threshold(4);
- 420   5                      }
- 421   4                      Overweight_alarm();
- 422   4                      break;
- 423   4                  case 4:
- 424   4                      sprintf(LCDstr, "k = %d", weight_k);
- 425   4                      LCD1602_Display_String(1, 1, LCDstr);
- 426   4      
-C51 COMPILER V9.59.0.0   APP_MAIN                                                          12/24/2024 23:40:52 PAGE 8   
+ 400   4                      /* code */
+ 401   4                  }
+ 402   3                  if (Page == 3)
+ 403   3                  {
+ 404   4                      Weight_threshold(3);
+ 405   4                  }
+ 406   3                  if (Page == 4)
+ 407   3                  {
+ 408   4                      AT24C04_ReadPage(AT24C04_ADDRESS, 0x00, EEPROM_weight_k, 4);                              
+             -                   // 读取EEPROM重量系数
+ 409   4                      printf("Ek = %s\n", EEPROM_weight_k);                                                     
+             -                   // Log打印重量系数
+ 410   4                      weight_k2 = (EEPROM_weight_k[1] - '0') * 100 + (EEPROM_weight_k[2] - '0') * 10 + (EEPROM_w
+             -eight_k[3] - '0'); // 格式化重量系数
+ 411   4                      printf("k = %d\n", weight_k2);                                                            
+             -                   // Log打印重量系数
+ 412   4                  }
+ 413   3              }
+ 414   2              if (Key4_event == 1)
+ 415   2              {
+C51 COMPILER V9.59.0.0   APP_MAIN                                                          12/25/2024 14:50:49 PAGE 8   
 
- 427   4                      sprintf(LCDstr, "Ek = %c", EEPROM_weight_k);
- 428   4                      LCD1602_Display_String(2, 1, LCDstr);
- 429   4                      break;
- 430   4                  default:
- 431   4                      LCD1602_Wr_Command(0x01);
- 432   4                      break;
- 433   4                  }
- 434   3                  LED1 = ~LED1;
- 435   3                  // LED2 = ~LED2;
- 436   3                  // LED3 = ~LED3;
- 437   3                  poll_neg_t = Get_Tikc();
- 438   3              }
- 439   2          }
- 440   1      }
- 441          
- 442          BOOL usb_OUT_callback()
- 443          {
- 444   1          // 接收字节数保存在OutNumber中
- 445   1          // 接收数据保存在UsbOutBuffer缓冲区
- 446   1          // USB_SendData("ok", 2);
- 447   1      
- 448   1          usb_set_weight_K(UsbOutBuffer, &OutNumber); // 设置重量系数
- 449   1          AT24C04_WritePage(AT24C04_ADDRESS, 0x00, UsbOutBuffer, OutNumber);
- 450   1          return 1;
- 451   1      }
+ 416   3      
+ 417   3                  Page_Switching();
+ 418   3              }
+ 419   2      
+ 420   2              if (poll_neg_t + poll_time < Get_Tikc())
+ 421   2              {
+ 422   3      
+ 423   3                  // printf("Page = %d\n", Page); // Log打印页面
+ 424   3                  switch (Page)
+ 425   3                  {
+ 426   4                  case 1:
+ 427   4      
+ 428   4                      LCD_Display_Weight(); // 显示重量
+ 429   4      
+ 430   4                      break;
+ 431   4                  case 2:
+ 432   4                      LCD_Display_Count(); // 显示计数
+ 433   4                      break;
+ 434   4                  case 3:
+ 435   4                      if (Key1 == 0 && Key2 == 1 && Page == 3)
+ 436   4                      {
+ 437   5                          Weight_threshold(1);
+ 438   5                      }
+ 439   4                      if (Key2 == 0 && Key1 == 1 && Page == 3)
+ 440   4                      {
+ 441   5                          Weight_threshold(2);
+ 442   5                      }
+ 443   4                      if (Key1 == 0 && Key2 == 0 && Page == 3)
+ 444   4                      {
+ 445   5                          Weight_threshold(4);
+ 446   5                      }
+ 447   4                      Overweight_alarm();
+ 448   4                      break;
+ 449   4                  case 4:
+ 450   4                      sprintf(LCDstr, "k = %d", weight_k);
+ 451   4                      LCD1602_Display_String(1, 1, LCDstr);
+ 452   4      
+ 453   4                      sprintf(LCDstr, "Ek = %d", weight_k2);
+ 454   4                      LCD1602_Display_String(2, 1, LCDstr);
+ 455   4                      break;
+ 456   4                  default:
+ 457   4                      LCD1602_Wr_Command(0x01);
+ 458   4                      break;
+ 459   4                  }
+ 460   3                  LED1 = ~LED1;
+ 461   3                  // LED2 = ~LED2;
+ 462   3                  // LED3 = ~LED3;
+ 463   3                  poll_neg_t = Get_Tikc();
+ 464   3              }
+ 465   2          }
+ 466   1      }
+ 467          
+ 468          BOOL usb_OUT_callback()
+ 469          {
+ 470   1          // 接收字节数保存在OutNumber中
+ 471   1          // 接收数据保存在UsbOutBuffer缓冲区
+ 472   1          // USB_SendData("ok", 2);
+ 473   1      
+ 474   1          usb_set_weight_K(UsbOutBuffer, &OutNumber); // 设置重量系数
+ 475   1          return 1;
+ 476   1      }
+
+C51 COMPILER V9.59.0.0   APP_MAIN                                                          12/25/2024 14:50:49 PAGE 9   
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   2629    ----
-   CONSTANT SIZE    =    232    ----
-   XDATA SIZE       =    260       6
+   CODE SIZE        =   3113    ----
+   CONSTANT SIZE    =    274    ----
+   XDATA SIZE       =    218       6
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

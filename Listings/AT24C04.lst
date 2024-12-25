@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   AT24C04                                                           12/24/2024 23:40:53 PAGE 1   
+C51 COMPILER V9.59.0.0   AT24C04                                                           12/25/2024 14:50:49 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE AT24C04
@@ -11,23 +11,23 @@ line level    source
    1          #include "AT24C04.h"
    2          
    3          /**
-   4           * @brief
+   4           * @brief 写入一个字节到AT24C04
    5           *
-   6           * @brief 写入一个字节到AT24C04
-   7           *
-   8           * @param addr 存储地址
-   9           * @param data 要写入的数据
-  10           */
-  11          void AT24C04_WriteByte(uchar AT24C04_ADDR, uchar addr, uchar SendData)
-  12          {
-  13   1          I2C_Start();                       // 启动I2C
-  14   1          I2C_SendData(AT24C04_ADDR | 0x01); // 发送器件地址和写命令
-  15   1          Recv_Ack();                        // 接收应答
-  16   1          I2C_SendData(addr);                // 发送存储地址
-  17   1          Recv_Ack();                        // 接收应答
-  18   1          I2C_SendData(SendData);            // 发送数据
-  19   1          Recv_Ack();                        // 接收应答
-  20   1          I2C_Stop();                        // 停止I2C
+   6           * @param addr 存储地址
+   7           * @param data 要写入的数据
+   8           */
+   9          void AT24C04_WriteByte(uchar AT24C04_ADDR, uchar addr, uchar SendData)
+  10          {
+  11   1          I2C_Start();                        // 启动I2C
+  12   1          I2C_SendData(AT24C04_ADDR);         // 发送器件地址和写命令
+  13   1          Recv_Ack();                         // 接收应答
+  14   1          I2C_SendData((addr & 0xFF));        // 发送存储高位地址
+  15   1          Recv_Ack();                         // 接收应答
+  16   1          I2C_SendData(((addr >> 8) & 0xFF)); // 发送存储低位地址
+  17   1          Recv_Ack();                         // 接收应答
+  18   1          I2C_SendData(SendData);             // 发送数据
+  19   1          Recv_Ack();                         // 接收应答
+  20   1          I2C_Stop();                         // 停止I2C
   21   1      }
   22          /**
   23           * @brief 从AT24C04读取一个字节
@@ -37,82 +37,80 @@ line level    source
   27           */
   28          uchar AT24C04_ReadByte(uchar AT24C04_ADDR, uchar addr)
   29          {
-  30   1          uchar ReaData;
-  31   1          I2C_Start();                       // 启动I2C
-  32   1          I2C_SendData(AT24C04_ADDR | 0x01); // 发送器件地址和写命令
-  33   1          Recv_Ack();                        // 接收应答
-  34   1          I2C_SendData(addr);                // 发送存储地址
-  35   1          Recv_Ack();                        // 接收应答
-  36   1          I2C_Start();                       // 重新启动I2C
-  37   1          I2C_SendData(AT24C04_ADDR | 0x00); // 发送器件地址和读命令
-  38   1          Recv_Ack();                        // 接收应答
-  39   1          ReaData = I2C_RecvData();          // 读取数据
-  40   1          I2C_SendNAck();                    // 发送非应答信号
-  41   1          I2C_Stop();                        // 停止I2C
-  42   1          return ReaData;
-  43   1      }
-  44          
-  45          /**
-  46           * @brief 写入多个字节到AT24C04
-  47           *
-  48           * @param addr 起始存储地址
-  49           * @param data 要写入的数据缓冲区
-  50           * @param length 要写入的数据长度
-  51           */
-  52          void AT24C04_WritePage(uchar AT24C04_ADDR, uchar addr, uchar *SendData, uchar length)
-  53          {
-  54   1          uchar i;
-C51 COMPILER V9.59.0.0   AT24C04                                                           12/24/2024 23:40:53 PAGE 2   
+  30   1          uchar ReadData;
+  31   1          I2C_Start();                        // 启动I2C
+  32   1          I2C_SendData(AT24C04_ADDR);         // 发送器件地址和写命令
+  33   1          Recv_Ack();                         // 接收应答
+  34   1          I2C_SendData((addr & 0xFF));        // 发送存储高位地址
+  35   1          Recv_Ack();                         // 接收应答
+  36   1          I2C_SendData(((addr >> 8) & 0xFF)); // 发送存储低位地址
+  37   1          Recv_Ack();                         // 接收应答
+  38   1          I2C_Start();                        // 重新启动I2C
+  39   1          I2C_SendData(AT24C04_ADDR | 0x01);  // 发送器件地址和读命令
+  40   1          Recv_Ack();                         // 接收应答
+  41   1          ReadData = I2C_RecvData();          // 读取数据
+  42   1          I2C_SendNAck();                     // 主机非应答
+  43   1          I2C_Stop();                         // 停止I2C
+  44   1          return ReadData;
+  45   1      }
+  46          
+  47          /**
+  48           * @brief 页写入方式
+  49           * @brief 写入多个字节到AT24C04
+  50           * @param addr 起始存储地址
+  51           * @param SendData 要写入的数据缓冲区
+  52           * @param length 要写入的数据长度
+  53           */
+  54          void AT24C04_WritePage(uchar AT24C04_ADDR, uchar addr, uchar *SendData)
+C51 COMPILER V9.59.0.0   AT24C04                                                           12/25/2024 14:50:49 PAGE 2   
 
-  55   1          I2C_Start();                       // 启动I2C
-  56   1          I2C_SendData(AT24C04_ADDR | 0x01); // 发送器件地址和写命令
-  57   1          Recv_Ack();                        // 接收应答
-  58   1          I2C_SendData(addr);                // 发送起始存储地址
-  59   1          Recv_Ack();                        // 接收应答
-  60   1          for (i = 0; i < length; i++)
-  61   1          {
-  62   2              I2C_SendData(SendData[i]); // 发送数据
-  63   2              Recv_Ack();                // 接收应答
-  64   2          }
-  65   1          I2C_Stop(); // 停止I2C
-  66   1      }
-  67          
-  68          /**
-  69           * @brief 从AT24C04读取多个字节
-  70           *
-  71           * @param addr 起始存储地址
-  72           * @param data 用于存储读取数据的缓冲区
-  73           * @param length 要读取的数据长度
-  74           */
-  75          void AT24C04_ReadPage(uchar AT24C04_ADDR, uchar addr, uchar *ReaData, uchar length)
-  76          {
-  77   1          uchar i;
-  78   1          I2C_Start();                       // 启动I2C
-  79   1          I2C_SendData(AT24C04_ADDR | 0x01); // 发送器件地址和写命令
-  80   1          Recv_Ack();                        // 接收应答
-  81   1          I2C_SendData(addr);                // 发送起始存储地址
-  82   1          Recv_Ack();                        // 接收应答
-  83   1          I2C_Start();                       // 重新启动I2C
-  84   1          I2C_SendData(AT24C04_ADDR | 0x00); // 发送器件地址和读命令
-  85   1          Recv_Ack();                        // 接收应答
-  86   1          for (i = 0; i < length; i++)
-  87   1          {
-  88   2              ReaData[i] = I2C_RecvData(); // 读取数据
-  89   2              if (i < length - 1)
-  90   2              {
-  91   3                  I2C_SendAck(); // 发送应答信号
-  92   3              }
-  93   2              else
-  94   2              {
-  95   3                  I2C_SendNAck(); // 发送非应答信号
-  96   3              }
-  97   2          }
-  98   1          I2C_Stop(); // 停止I2C
-  99   1      }
+  55          {
+  56   1          uchar length = sizeof(SendData);
+  57   1          uchar i;
+  58   1          I2C_Start();                                                     // 启动I2C
+  59   1          I2C_SendData(AT24C04_ADDR | 0x00 | (((addr >> 8) & 0x07) << 1)); // 发送器件地址和写命令
+  60   1          Recv_Ack();                                                      // 接收应答
+  61   1          I2C_SendData((addr & 0xFF));                                     // 发送存储低位地址
+  62   1          Recv_Ack();                                                      // 接收应答
+  63   1          for (i = 0; i < length; i++)
+  64   1          {
+  65   2              I2C_SendData(SendData[i]); // 发送数据
+  66   2              Recv_Ack();                // 接收应答
+  67   2          }
+  68   1          I2C_Stop(); // 停止I2C
+  69   1      }
+  70          
+  71          /**
+  72           * @brief 页读取方式
+  73           * @brief 从AT24C04读取一页数据
+  74           * @param addr 起始存储地址
+  75           * @param ReadData 读取数据缓冲区
+  76           * @param length 读取数据长度
+  77           */
+  78          void AT24C04_ReadPage(uchar AT24C04_ADDR, uchar addr, uchar *ReadData, uchar length)
+  79          {
+  80   1          uchar i;
+  81   1          I2C_Start();                                                     // 启动I2C
+  82   1          I2C_SendData(AT24C04_ADDR | 0x00 | (((addr >> 8) & 0x07) << 1)); // 发送器件地址和读命令
+  83   1          Recv_Ack();                                                      // 接收应答
+  84   1          I2C_SendData((addr & 0xFF));                                     // 发送存储低位地址
+  85   1          Recv_Ack();                                                      // 接收应答
+  86   1          I2C_Start();                                                     // 重新启动I2C
+  87   1          I2C_SendData(AT24C04_ADDR | 0x01);                               // 发送器件地址和读命令
+  88   1          Recv_Ack();                                                      // 接收应答
+  89   1      
+  90   1          for (i = 0; i < length; i++)
+  91   1          {
+  92   2              *(ReadData + i) = I2C_RecvData(); // 读取数据
+  93   2              I2C_SendAck();                    // 主机应答
+  94   2          }
+  95   1          I2C_SendNAck(); // 主机非应答
+  96   1          I2C_Stop();     // 停止I2C
+  97   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    351    ----
+   CODE SIZE        =    371    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----      20
    PDATA SIZE       =   ----    ----

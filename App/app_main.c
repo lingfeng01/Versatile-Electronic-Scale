@@ -7,21 +7,23 @@ char LCDstr[15];
 BYTE usbStr[64];
 
 int chishu = 0;
-uint weight = 0;         // 显示重量
-uint threshold = 0;      // 阈值
-uint weight_k = 400;     // 重量系数
-uchar weight_k2[16];     // 重量系数
-uint usb_weight_k = 400; // USB重量系数
-char *EEPROM_weight_k[16];
-uint weight_tare = 0;       // 皮重量
-uint weight_tare_after = 0; // 去皮后重量
-uint weight_count = 100;    // 计数重量
-ulong weight_base = 0;      // 基准重量
-ulong poll_neg_t = 0;       // 重量负值时间
-ulong weigh_poll_neg_t = 0; // 重量负值时间
-ulong beep_net_time = 0;    // 蜂鸣器负值时间
-uint poll_beep_time = 1200; // 蜂鸣器轮询时间
-uint Weight_difference = 0; // 重量差
+uint weight = 0;                 // 显示重量
+uint threshold = 0;              // 阈值
+uint weight_k = 400;             // 重量系数
+uint weight_k2 = 0;              // 重量系数
+uint usb_weight_k = 400;         // USB重量系数
+uchar EEPROM_weight_k[16] = {0}; // EEPROM重量系数
+uint weight_tare = 0;            // 皮重量
+uint weight_tare_after = 0;      // 去皮后重量
+uint weight_count = 100;         // 计数重量
+ulong weight_base = 0;           // 基准重量
+ulong poll_neg_t = 0;            // 重量负值时间
+ulong weigh_poll_neg_t = 0;      // 重量负值时间
+ulong beep_neg_time = 0;         // 蜂鸣器负值时间
+uint beep_poll_time = 1200;      // 蜂鸣器轮询时间
+uint EEPROM_poll_neg_t = 0;      // EEPROM负值时间
+uint EEPROM_poll_time = 3000;    // EEPROM轮询时间
+uint Weight_difference = 0;      // 重量差
 
 uchar Key1_cnt = 0;  // 按键消抖计数值
 uchar Key2_cnt = 0;  // 按键消抖计数值
@@ -106,6 +108,7 @@ void LCD_Display_Weight()
         weight_tare_after = read_weight(weight_k, weight_base) - weight_tare; // 读取重量
         printf("weight_base = %lu\n", weight_base);                           // Log打印基准重量
         printf("weight = %d\n", weight_tare_after);                           // Log打印重量
+        printf("weight_k = %3d\n", weight_k);                                 // Log打印重量系数
         weigh_poll_neg_t = Get_Tikc();
     }
 
@@ -128,6 +131,7 @@ void tare_weight()
     {
         weight_tare = read_weight(weight_k, weight_base); // 读取重量
         printf("weight_tare = %d\n", weight_tare);        // Log打印去皮重量
+        printf("weight_k = %3d\n", weight_k);             // Log打印重量系数
     }
 }
 
@@ -173,6 +177,7 @@ void LCD_Display_Count()
         printf("weight = %d\n", weight);             // Log打印重量值
         printf("weight_count = %d\n", weight_count); // Log打印计数重量值
         printf("Item_Count = %d\n", Item_Count);     // Log打印计数值
+        printf("weight_k = %3d\n", weight_k);        // Log打印重量系数
         weigh_poll_neg_t = Get_Tikc();
     }
     sprintf(LCDstr, "%4d", weight);        // 格式化字符串
@@ -230,14 +235,15 @@ void Overweight_alarm()
 
     if (weight > threshold && weight != 0)
     {
-        if (beep_net_time + poll_beep_time - (weight / (threshold + 50) * 100) < Get_Tikc())
+        if (beep_neg_time + beep_poll_time - (weight / (threshold + 50) * 100) < Get_Tikc())
         {
             BEEP = ~BEEP;
             LED3 = ~LED3;
             LED1 = 0;
-            printf("weight = %4d\n", weight);
-            printf("threshold = %3d", threshold);
-            beep_net_time = Get_Tikc();
+            printf("weight = %4d\n", weight);     // Log打印重量值
+            printf("threshold = %3d", threshold); // Log打印阈值
+            printf("weight_k = %3d\n", weight_k); // Log打印重量系数
+            beep_neg_time = Get_Tikc();
         }
     }
     else
@@ -299,12 +305,27 @@ void usb_set_weight_K(BYTE UsbOut[], BYTE *size_t)
     }
     if (usbStr[0] == '#')
     {
-        usb_weight_k = (usbStr[1] - '0') * 100 + (usbStr[2] - '0') * 10 + (usbStr[3] - '0');
+        usb_weight_k = (usbStr[1] - '0') * 100 + (usbStr[2] - '0') * 10 + (usbStr[3] - '0'); // 设置重量系数
+        AT24C04_WritePage(AT24C04_ADDRESS, 0x00, UsbOut);                                    // 写入EEPROM重量系数
     }
     weight_k = usb_weight_k;
-    weight_k2[0] = usb_weight_k;
     sprintf(USB_Str, "k = %3d\n", weight_k);
     USB_SendData(USB_Str, 9); // Log打印重量系数
+}
+
+/**
+ * @brief EEPROM轮询读取
+ * 该函数EEPROM轮询读取。
+ */
+void EEPROM_Poll_Read()
+{
+    if (EEPROM_poll_neg_t + EEPROM_poll_time < Get_Tikc())
+    {
+        AT24C04_ReadPage(AT24C04_ADDRESS, 0x00, EEPROM_weight_k, 4);                                                 // 读取EEPROM重量系数
+        weight_k2 = (EEPROM_weight_k[1] - '0') * 100 + (EEPROM_weight_k[2] - '0') * 10 + (EEPROM_weight_k[3] - '0'); // 设置重量系数
+        printf("Ek = %d\n", weight_k2);                                                                              // Log打印重量系数
+        EEPROM_poll_neg_t = Get_Tikc();                                                                              // 重置EEPROM负值时间
+    }
 }
 
 void app_main()
@@ -312,20 +333,22 @@ void app_main()
 
     // 扩展寄存器(XFR)访问使能
     P_SW2 |= 0x80;
-    IO_Init();     // 初始化I/O端口
-    usb_init();    // USB初始化
-    Timer0_Init(); // 定时器0初始化
-    EA = 1;        // 开启总中断
-
-    while (DeviceState != DEVSTATE_CONFIGURED && chishu > 200) // 等待USB配置完成
+    IO_Init();                                                  // 初始化I/O端口
+    usb_init();                                                 // USB初始化
+    Timer0_Init();                                              // 定时器0初始化
+    EA = 1;                                                     // 开启总中断
+    while (DeviceState != DEVSTATE_CONFIGURED && chishu > 1000) // 等待USB配置完成
     {
         DelayTick(1);
     }
-    LCD1602_Init();                   // 初始化LCD1602
-    I2C_Init();                       // 初始化I2C
-    Display_PersonInfo();             // 显示个人信息
+    LCD1602_Init();       // 初始化LCD1602
+    I2C_Init();           // 初始化I2C
+    Display_PersonInfo(); // 显示个人信息
+    AT24C04_ReadPage(AT24C04_ADDRESS, 0x00, EEPROM_weight_k, 4);
+    weight_k2 = (EEPROM_weight_k[1] - '0') * 100 + (EEPROM_weight_k[2] - '0') * 10 + (EEPROM_weight_k[3] - '0');
+    printf("Ek = %d\n", weight_k2);
+    weight_k = weight_k2;
     weight_base = read_weight_base(); // 读取基准重量
-
     while (1)
     {
 
@@ -382,7 +405,10 @@ void app_main()
             }
             if (Page == 4)
             {
-                AT24C04_ReadPage(AT24C04_ADDRESS, 0x00, *EEPROM_weight_k, 4);
+                AT24C04_ReadPage(AT24C04_ADDRESS, 0x00, EEPROM_weight_k, 4);                                                 // 读取EEPROM重量系数
+                printf("Ek = %s\n", EEPROM_weight_k);                                                                        // Log打印重量系数
+                weight_k2 = (EEPROM_weight_k[1] - '0') * 100 + (EEPROM_weight_k[2] - '0') * 10 + (EEPROM_weight_k[3] - '0'); // 格式化重量系数
+                printf("k = %d\n", weight_k2);                                                                               // Log打印重量系数
             }
         }
         if (Key4_event == 1)
@@ -424,7 +450,7 @@ void app_main()
                 sprintf(LCDstr, "k = %d", weight_k);
                 LCD1602_Display_String(1, 1, LCDstr);
 
-                sprintf(LCDstr, "Ek = %c", EEPROM_weight_k);
+                sprintf(LCDstr, "Ek = %d", weight_k2);
                 LCD1602_Display_String(2, 1, LCDstr);
                 break;
             default:
@@ -446,6 +472,5 @@ BOOL usb_OUT_callback()
     // USB_SendData("ok", 2);
 
     usb_set_weight_K(UsbOutBuffer, &OutNumber); // 设置重量系数
-    AT24C04_WritePage(AT24C04_ADDRESS, 0x00, UsbOutBuffer, OutNumber);
     return 1;
 }

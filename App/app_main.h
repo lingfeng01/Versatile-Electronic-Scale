@@ -39,6 +39,7 @@ void Overweight_alarm();
 void Weight_threshold();
 void Page_Switching();
 void usb_set_weight_K(BYTE UsbOut[], BYTE *size_t);
+void EEPROM_Poll_Read();
 
 void app_main();
 
